@@ -1,0 +1,4 @@
+python3 -m venv hng_venv
+source hng_venv/Script/activate
+
+pip3 install flask
