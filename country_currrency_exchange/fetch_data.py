@@ -36,15 +36,12 @@ class FetchData:
                     #     currency_code = None
                     #     exchange_rate = None
                     #     estimated_gdp = 0
-                   
                     # currency_code = currencies[0]['code'] if currencies else None
 
-                    # Handle currencies
                     currencies = country_info.get('currencies', {})
                     currency_code = None
                     if currencies and isinstance(currencies, dict):
                         currency_code = list(currencies.keys())[0] if currencies else None
-
 
                     if not name or name == None or population is None or not currency_code or currency_code == None:
                         continue

@@ -1,5 +1,5 @@
 ### Country Currency & Exchange API
-#### A nRESTful API that fetches country data from an external API, stores it in a database, and provides CRUD operations.
+#### A RESTful API that fetches country data from an external API, stores it in a database, and provides CRUD operations.
 #### Functionalities
 - Fetch country data from: https://restcountries.com/v2/all?fields=name,capital,region,population,flag,currencies
 - For each country, extract the currency code (e.g. NGN, USD, GBP).

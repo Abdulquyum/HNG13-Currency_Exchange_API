@@ -59,7 +59,7 @@ def get_countries():
         return jsonify(countries_list), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/countries/<string:name>', methods=['GET'], strict_slashes=False)
 def get_country_by_name(name):
@@ -105,7 +105,7 @@ def get_country_by_name(name):
             return jsonify({"message": "Country not found."}), 404
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/countries/<string:name>', methods=['DELETE'], strict_slashes=False)
 def delete_country_by_name(name):
@@ -118,7 +118,7 @@ def delete_country_by_name(name):
             return jsonify({"message": "Country not found."}), 404
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/status', methods=['GET'], strict_slashes=False)
 def total_countries_and_last_refreshed():
@@ -133,7 +133,7 @@ def total_countries_and_last_refreshed():
         }), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/countries/image', methods=['GET'], strict_slashes=False)
 def get_country_flags():
@@ -161,7 +161,7 @@ def get_country_flags():
     except FileNotFoundError:
         return jsonify({"error": "Summary image not found"}), 404
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
 
 if __name__ == '__main__':

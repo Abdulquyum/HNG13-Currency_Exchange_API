@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import requests
 from sqlalchemy import create_engine
 from country import Base, Country
 from sqlalchemy.orm import sessionmaker
@@ -8,7 +7,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 class DB:
     def __init__(self):
-        self.engine = create_engine('sqlite:///countries_db.db')
+        self.engine = create_engine('sqlite:///countries.db')
         Base.metadata.create_all(self.engine)
         self.__session = None
 
@@ -31,23 +30,25 @@ class DB:
             existing_country.estimated_gdp = estimated_gdp
             existing_country.flag_url = flag_url
             existing_country.last_refreshed_at = last_refreshed_at
+            self._session.commit()
+            return existing_country
         else:
             ''' Add new country '''
-        new_country = Country(
-            name=name,
-            capital=capital,
-            region=region,
-            population=population,
-            currency_code=currency_code,
-            exchange_rate=exchange_rate,
-            estimated_gdp=estimated_gdp,
-            flag_url=flag_url,
-            last_refreshed_at=last_refreshed_at
-        )
-        self._session.add(new_country)
-        self._session.commit()
+            new_country = Country(
+                name=name,
+                capital=capital,
+                region=region,
+                population=population,
+                currency_code=currency_code,
+                exchange_rate=exchange_rate,
+                estimated_gdp=estimated_gdp,
+                flag_url=flag_url,
+                last_refreshed_at=last_refreshed_at
+            )
+            self._session.add(new_country)
+            self._session.commit()
 
-        return new_country
+            return new_country
 
     def get_all_countries(self):
         return self._session.query(Country).all()
@@ -62,4 +63,3 @@ class DB:
             self._session.commit()
 
             return None
-
