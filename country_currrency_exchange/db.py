@@ -2,13 +2,13 @@
 
 import requests
 from sqlalchemy import create_engine
-from country import Base
+from country import Base, Country
 from sqlalchemy.orm import sessionmaker
-
+from sqlalchemy.orm.exc import NoResultFound
 
 class DB:
     def __init__(self):
-        self.engine = create_engine('mysql+pymysql://root:root@localhost/countries_db')
+        self.engine = create_engine('sqlite:///countries_db.db')
         Base.metadata.create_all(self.engine)
         self.__session = None
 
@@ -20,7 +20,20 @@ class DB:
         return self.__session
 
     def add_country(self, name, capital, region, population, currency_code, exchange_rate, estimated_gdp, flag_url, last_refreshed_at):
-        new_country = country(
+        existing_country = self._session.query(Country).filter_by(name=name).first()
+        if existing_country:
+            ''' Update existing country '''
+            existing_country.capital = capital
+            existing_country.region = region
+            existing_country.population = population
+            existing_country.currency_code = currency_code
+            existing_country.exchange_rate = exchange_rate
+            existing_country.estimated_gdp = estimated_gdp
+            existing_country.flag_url = flag_url
+            existing_country.last_refreshed_at = last_refreshed_at
+        else:
+            ''' Add new country '''
+        new_country = Country(
             name=name,
             capital=capital,
             region=region,
@@ -37,10 +50,10 @@ class DB:
         return new_country
 
     def get_all_countries(self):
-        return self._session.query(country).all()
+        return self._session.query(Country).all()
 
     def get_country_by_name(self, name):
-        return self._session.query(country).filter_by(name=name).first()
+        return self._session.query(Country).filter_by(name=name).first()
 
     def delete_country_by_name(self, name):
         country_to_delete = self.get_country_by_name(name)
@@ -49,3 +62,4 @@ class DB:
             self._session.commit()
 
             return None
+

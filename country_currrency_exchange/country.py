@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-class country(Base):
+class Country(Base):
     __tablename__ = 'countries'
 
     id = Column(Integer, primary_key=True)
@@ -18,3 +18,6 @@ class country(Base):
     estimated_gdp = Column(Float, nullable=False)
     flag_url = Column(String(255), nullable=True)
     last_refreshed_at = Column(DateTime, nullable=False)
+
+    def __repr__(self):
+        return f"<Country(name='{self.name}', capital='{self.capital}', region='{self.region}')>"
