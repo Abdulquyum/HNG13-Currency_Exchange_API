@@ -70,26 +70,3 @@ FLUSH PRIVILEGES;
 EXIT;
 
 - pip install mysqlclient
-
-##### update db.py
-- database_url = os.getenv('DATABASE_URL', 'sqlite:///countries.db')
-self.engine = create_engine(database_url)
-
-- sudo systemctl enable mysql
-- sudo systemctl start mysql
-
-mysql> CREATE DATABASE country_db;
-Query OK, 1 row affected (0.01 sec)
-
-mysql> CREATE USER 'root'@'localhost' IDENTIFIED BY 'root';
-ERROR 1396 (HY000): Operation CREATE USER failed for 'root'@'localhost'
-mysql> CREATE USER 'abdulquyum'@'localhost' IDENTIFIED BY 'root';
-Query OK, 0 rows affected (0.02 sec)
-
-mysql> GRANT ALL PRIVILEGES ON your_database_name.* TO 'your_username'@'localhost';
-ERROR 1410 (42000): You are not allowed to create a user with GRANT
-mysql> GRANT ALL PRIVILEGES ON country_db.* TO 'abdulquyum'@'localhost';
-Query OK, 0 rows affected (0.01 sec)
-
-mysql> FLUSH PRIVILEGES;
-Query OK, 0 rows affected (0.01 sec)
