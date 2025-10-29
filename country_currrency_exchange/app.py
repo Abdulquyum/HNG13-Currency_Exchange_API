@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 import requests
 from fetch_data import FetchData
+import os
 
 app = Flask(__name__)
 
@@ -29,6 +30,7 @@ def get_countries():
         countries = fetcher.get_all_countries()
         countries_list = [
             {
+                "id": country.id,
                 "name": country.name,
                 "capital": country.capital,
                 "region": country.region,
@@ -89,6 +91,7 @@ def get_country_by_name(name):
                 return jsonify({"error": "Validation failed", "details": errors}), 400
 
             country_data = {
+                "id": country.id,
                 "name": country.name,
                 "capital": country.capital,
                 "region": country.region,
@@ -125,7 +128,11 @@ def total_countries_and_last_refreshed():
     try:
         countries = fetcher.get_all_countries()
         total_countries = len(countries)
-        last_refreshed_at = max(country.last_refreshed_at for country in countries) if countries else None
+
+        if countries:
+            last_refreshed_at = max(country.last_refreshed_at for country in countries) if countries else None
+        else:
+            last_refreshed_at = None
 
         return jsonify({
             "total_countries": total_countries,
@@ -135,34 +142,30 @@ def total_countries_and_last_refreshed():
     except Exception as e:
         return jsonify({"error": "Internal server error"}), 500
 
+# @app.route('/countries/image', methods=['GET'], strict_slashes=False)
+# def get_country_flags():
+#     try:
+#         with open('cache/summary.png', 'rb') as image_file:
+#             image_data = image_file.read()
+#         return (image_data, 200, {
+#             'Content-Type': 'image/png',
+#             'Content-Disposition': 'inline; filename="summary.png"'
+#         })
+#     except FileNotFoundError:
+#         return jsonify({"error": "Summary image not found"}), 404
+#     except Exception as e:
+#         return jsonify({"error": "Internal server error"}), 500
+
 @app.route('/countries/image', methods=['GET'], strict_slashes=False)
 def get_country_flags():
-    '''
-    Image Generation
-    When /countries/refresh runs:
-    After saving countries in the database, generate an image (e.g., cache/summary.png) containing:
-    Total number of countries
-    Top 5 countries by estimated GDP
-    Timestamp of last refresh
-    Save the generated image on disk at cache/summary.png.
-    Add a new endpoint:
-    GET /countries/image → Serve the generated summary image
-    If no image exists, return:
-    { "error": "Summary image not found" }
-    '''
-
     try:
-        with open('cache/summary.png', 'rb') as image_file:
-            image_data = image_file.read()
-        return (image_data, 200, {
-            'Content-Type': 'image/png',
-            'Content-Disposition': 'inline; filename="summary.png"'
-        })
-    except FileNotFoundError:
-        return jsonify({"error": "Summary image not found"}), 404
+        image_path = 'cache/summary.png'
+        if os.path.exists(image_path):
+            return send_file(image_path, mimetype='image/png')
+        else:
+            return jsonify({"error": "Summary image not found"}), 404
     except Exception as e:
         return jsonify({"error": "Internal server error"}), 500
-
 
 if __name__ == '__main__':
     app.run(port=3000, host="0.0.0.0", debug=True)
